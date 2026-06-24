@@ -9,7 +9,16 @@ fetch(new URL('data/entrants.json', window.location.href))
     const select = document.getElementById('category');
     const results = document.getElementById('results');
 
-    const categories = Array.from(new Set(data.map(item => item.category))).sort();
+    const categoryOrder = new Map();
+    data.forEach(item => {
+      if (!categoryOrder.has(item.category)) {
+        categoryOrder.set(item.category, item.category_no ?? Number.MAX_SAFE_INTEGER);
+      }
+    });
+
+    const categories = Array.from(new Set(data.map(item => item.category)))
+      .sort((a, b) => (categoryOrder.get(a) - categoryOrder.get(b)) || a.localeCompare(b));
+
     categories.forEach(category => {
       const option = document.createElement('option');
       option.value = category;
