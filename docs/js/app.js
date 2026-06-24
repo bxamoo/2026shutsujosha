@@ -17,6 +17,7 @@ fetch(new URL('data/entrants.json', window.location.href))
     });
 
     const categories = Array.from(new Set(data.map(item => item.category)))
+      .filter(category => category !== '小学１年生男子上級')
       .sort((a, b) => (categoryOrder.get(a) - categoryOrder.get(b)) || a.localeCompare(b));
 
     categories.forEach(category => {
@@ -29,7 +30,7 @@ fetch(new URL('data/entrants.json', window.location.href))
     const columns = [
       { key: 'id', label: 'No.' },
       { key: 'name', label: '名前' },
-      { key: 'kana', label: 'かな' },
+      { key: 'kana', label: 'ふりがな' },
       { key: 'dojo', label: '道場名' },
       { key: 'rank', label: 'ランク' },
       { key: 'height', label: '身長' },
