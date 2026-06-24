@@ -17,30 +17,37 @@ fetch(new URL('data/entrants.json', window.location.href))
       select.appendChild(option);
     });
 
+    const columns = [
+      { key: 'id', label: 'No.' },
+      { key: 'name', label: '名前' },
+      { key: 'kana', label: 'かな' },
+      { key: 'dojo', label: '道場名' },
+      { key: 'rank', label: 'ランク' },
+      { key: 'height', label: '身長' },
+      { key: 'weight', label: '体重' },
+      { key: 'age', label: '年齢' },
+      { key: 'grade', label: '学年' },
+      { key: 'gender', label: '性別' },
+      { key: 'category_no', label: 'カテゴリNo.' },
+      { key: 'category', label: 'カテゴリ' }
+    ].filter(column => data.some(item => item[column.key] !== undefined));
+
     function render(list) {
       if (!list.length) {
         results.innerHTML = '<div>該当する選手がいません。</div>';
         return;
       }
 
-      const headers = Array.from(
-        new Set(list.flatMap(item => Object.keys(item)))
-      ).sort((a, b) => {
-        const order = ['id', 'name', 'dojo', 'rank', 'height', 'weight', 'age', 'grade', 'gender', 'category'];
-        return (order.indexOf(a) - order.indexOf(b)) || a.localeCompare(b);
-      });
-
       const tableRows = list.map(item => {
-        const cells = headers.map(header => `<td>${item[header] ?? ''}</td>`).join('');
-        return `<tr><td>${item.id}</td>${cells.replace(`<td>${item.id}</td>`, '')}</tr>`;
+        const cells = columns.map(column => `<td>${item[column.key] ?? ''}</td>`).join('');
+        return `<tr>${cells}</tr>`;
       }).join('');
 
       results.innerHTML = `
         <table class="entrant-table">
           <thead>
             <tr>
-              <th>No.</th>
-              ${headers.map(header => `<th>${header}</th>`).join('')}
+              ${columns.map(column => `<th>${column.label}</th>`).join('')}
             </tr>
           </thead>
           <tbody>${tableRows}</tbody>
