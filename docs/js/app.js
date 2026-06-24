@@ -24,7 +24,13 @@ fetch(new URL('data/entrants.json', window.location.href))
       }
 
       results.innerHTML = list
-        .map(item => `<div>${item.id}. ${item.name} - ${item.category}</div>`)
+        .map(item => {
+          const details = Object.entries(item)
+            .map(([key, value]) => `<li><strong>${key}:</strong> ${value}</li>`)
+            .join('');
+
+          return `<div class="entrant"><div>${item.id}. ${item.name} - ${item.category}</div><ul>${details}</ul></div>`;
+        })
         .join('');
     }
 
