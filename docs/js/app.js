@@ -23,15 +23,29 @@ fetch(new URL('data/entrants.json', window.location.href))
         return;
       }
 
-      results.innerHTML = list
-        .map(item => {
-          const details = Object.entries(item)
-            .map(([key, value]) => `<li><strong>${key}:</strong> ${value}</li>`)
-            .join('');
+      const headers = Array.from(
+        new Set(list.flatMap(item => Object.keys(item)))
+      ).sort((a, b) => {
+        const order = ['id', 'name', 'dojo', 'rank', 'height', 'weight', 'age', 'grade', 'gender', 'category'];
+        return (order.indexOf(a) - order.indexOf(b)) || a.localeCompare(b);
+      });
 
-          return `<div class="entrant"><div>${item.id}. ${item.name} - ${item.category}</div><ul>${details}</ul></div>`;
-        })
-        .join('');
+      const tableRows = list.map(item => {
+        const cells = headers.map(header => `<td>${item[header] ?? ''}</td>`).join('');
+        return `<tr><td>${item.id}</td>${cells.replace(`<td>${item.id}</td>`, '')}</tr>`;
+      }).join('');
+
+      results.innerHTML = `
+        <table class="entrant-table">
+          <thead>
+            <tr>
+              <th>No.</th>
+              ${headers.map(header => `<th>${header}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      `;
     }
 
     render(data);
