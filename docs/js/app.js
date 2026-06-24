@@ -1,5 +1,10 @@
-fetch('../data/entrants.json')
-  .then(res => res.json())
+fetch(new URL('data/entrants.json', window.location.href))
+  .then(res => {
+    if (!res.ok) {
+      throw new Error(`データの読み込みに失敗しました: ${res.status}`);
+    }
+    return res.json();
+  })
   .then(data => {
     const select = document.getElementById('category');
     const results = document.getElementById('results');
@@ -13,6 +18,11 @@ fetch('../data/entrants.json')
     });
 
     function render(list) {
+      if (!list.length) {
+        results.innerHTML = '<div>該当する選手がいません。</div>';
+        return;
+      }
+
       results.innerHTML = list
         .map(item => `<div>${item.id}. ${item.name} - ${item.category}</div>`)
         .join('');
@@ -27,4 +37,7 @@ fetch('../data/entrants.json')
         : data;
       render(filtered);
     });
+  })
+  .catch(error => {
+    document.getElementById('results').innerHTML = `<div>${error.message}</div>`;
   });
